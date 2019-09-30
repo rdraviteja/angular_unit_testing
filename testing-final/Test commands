@@ -1,0 +1,473 @@
+T SQL – NOTES
+use myFirstDB;
+ 
+CREATE TABLE CUSTOMERS1(
+​ID INT​​​​NOT NULL,
+​NAME VARCHAR(20)​NOT NULL,
+​AGE INT​​​​NOT NULL,
+​ADDRESS CHAR(25),
+​SALARY DECIMAL(18,2),​
+​PRIMARY KEY(ID)
+);
+ 
+exec sp_columns CUSTOMERS1;
+ 
+DROP TABLE CUSTOMERS1;
+ 
+INSERT INTO CUSTOMERS1 (ID,NAME,AGE,ADDRESS,SALARY)
+VALUES(1,'RAMESH',25,'DELHI',23000);
+INSERT INTO CUSTOMERS1 VALUES(2,'SURESH',25,'VADODARA',22000);
+INSERT INTO CUSTOMERS1 VALUES(3,'PRAKASH',25,'GURGAON',24000);
+INSERT INTO CUSTOMERS1 VALUES(4,'HARISH',25,'MUMBAI',26000);
+INSERT INTO CUSTOMERS1 VALUES(5,'DINESH',25,'CHENNAI',22000);
+INSERT INTO CUSTOMERS1 VALUES(6,'VINISH',32,'HYDERABAD',43000);
+INSERT INTO CUSTOMERS1 VALUES(7,'PARESH',22,'HYDERABAD',33000);
+ 
+SELECT * FROM CUSTOMERS1;
+ 
+1​RAMESH​25​DELHI                    ​23000.00
+2​SURESH​25​VADODARA                 ​22000.00
+3​PRAKASH​25​GURGAON                  ​24000.00
+4​HARISH​20​MUMBAI                   ​26000.00
+5​DINESH​25​CHENNAI                  ​22000.00
+6​VINISH​32​HYDERABAD                ​43000.00
+7​PARESH​22​HYDERABAD                ​33000.00
+ 
+ 
+UPDATE CUSTOMERS1 SET AGE=20 WHERE ID=4;
+ 
+DELETE FROM CUSTOMERS1 WHERE NAME = 'VINISH'
+ 
+DELETE FROM CUSTOMERS1
+ 
+SELECT NAME,SALARY FROM CUSTOMERS1 WHERE SALARY > 25000
+ 
+SELECT NAME,AGE,ADDRESS FROM CUSTOMERS1 WHERE ADDRESS LIKE '%I';
+RAMESH​25​DELHI                  
+HARISH​20​MUMBAI                  
+DINESH​25​CHENNAI                  
+ 
+Like Operator
+The MS SQL Server LIKE clause is used to compare a value to similar values using wildcard operators. There are two wildcards used in conjunction with the LIKE operator
+• The percent sign (%)
+• The underscore (_)
+The percent sign represents zero, one, or multiple characters. The underscore represents a single number or character. The symbols can be used in combinations.
+ 
+ORDER BY The MS SQL Server ORDER BY clause is used to sort the data in ascending or descending order, based on one or more columns. Some database sort query results in ascending order by default.
+SELECT NAME, AGE FROM CUSTOMERS1 ORDER BY AGE DESC;
+ 
+GROUP BY The SQL Server GROUP BY clause is used in collaboration with the SELECT statement to arrange identical data into groups. GROUP BY clause follows the WHERE clause in a SELECT statement and precedes the ORDER BY clause.
+INSERT INTO CUSTOMERS1 VALUES(8,'HARISH',25,'MUMBAI',100000);
+SELECT * FROM CUSTOMERS1;
+ID​NAME​​AGE​ADDRESS​​SALARY
+1​RAMESH​​25​DELHI                    ​​23000.00
+2​SURESH​​25​VADODARA                 ​22000.00
+3​PRAKASH​25​GURGAON                  ​24000.00
+4​HARISH​​20​MUMBAI                   ​26000.00
+5​DINESH​​25​CHENNAI                  ​22000.00
+6​VINISH​​32​HYDERABAD                ​43000.00
+7​PARESH​​22​HYDERABAD                ​33000.00
+8​HARISH​​25​MUMBAI                   ​100000.00
+ 
+SELECT NAME, SUM(SALARY) AS [SUM OF SALARY] FROM CUSTOMERS1 GROUP BY NAME ORDER BY NAME;
+NAME​​SUM OF SALARY
+DINESH​​22000.00
+HARISH​​126000.00
+PARESH​​33000.00
+PRAKASH​24000.00
+RAMESH​23000.00
+SURESH​​22000.00
+VINISH​​43000.00
+HAVING Clause enables you to specify conditions that filter which group results appear in the results.
+The WHERE clause places conditions on the selected columns, whereas the HAVING clause places conditions on groups created by the GROUP BY clause.
+SELECT AGE FROM CUSTOMERS1 GROUP BY AGE HAVING COUNT(AGE) >= 2;
+AGE
+25
+ 
+DISTINCT  The MS SQL Server DISTINCT keyword is used in conjunction with SELECT statement to eliminate all the duplicate records and fetching only unique records.
+SELECT DISTINCT AGE FROM CUSTOMERS1;
+AGE
+20
+22
+25
+32
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Creating Orders Table
+ 
+CREATE TABLE ORDERS (
+​OID​​​INT​​NOT NULL,
+​DATE​​DATE​NOT NULL,
+​CUSTOMER_ID INT​​NOT NULL,
+​AMOUNT​​FLOAT​NOT NULL​
+);
+INSERT INTO ORDERS VALUES(101, '2018-01-05 12:00:00', 1, 2000) ;
+SELECT * FROM ORDERS;
+OID​DATE​​​​CUSTOMER_ID​​​AMOUNT
+101​2018-01-05​​​1​​​​2000
+ 
+Altering the column type from date to smalldatetime
+ALTER TABLE ORDERS
+ALTER COLUMN DATE Smalldatetime;
+ 
+Adding primary key constraints to existing table
+ALTER TABLE ORDERS
+ADD PRIMARY KEY(OID);
+ 
+SELECT * FROM ORDERS;
+OID​DATE​​​​CUSTOMER_ID​​​AMOUNT
+101​2018-01-05 00:00:00​1​​​​2000
+ 
+INSERT INTO ORDERS VALUES(102, '2018-08-26 12:00:00', 2, 5000) ;
+INSERT INTO ORDERS VALUES(103, '2018-10-01 12:00:00', 4, 3000) ;
+INSERT INTO ORDERS VALUES(104, '2018-08-16 12:00:00', 3, 4000) ;
+ 
+OID​DATE​​​​CUSTOMER_ID​​AMOUNT
+101​2018-01-05 00:00:00​​1​​​2000
+102​2018-08-26 12:00:00​​2​​​5000
+103​2018-10-01 12:00:00​​4​​​3000
+104​2018-08-16 12:00:00​​3​​​4000
+ 
+SQL – Constraints Constraints are the rules enforced on the data columns of a table. These are used to limit the type of data that can go into a table. This ensures the accuracy and reliability of the data in the database.
+Constraints could be either on a column level or a table level. The column level constraints are applied only to one column, whereas the table level constraints are applied to the whole table.
+NOT NULL Constraint − Ensures that a column cannot have NULL value.
+DEFAULT Constraint − Provides a default value for a column when none is specified. The following SQL creates a new table called CUSTOMERS and adds five columns. Here, the SALARY column is set to 5000.00 by default, so in case the INSERT INTO statement does not provide a value for this column, then by default this column would be set to 5000.00.
+CREATE TABLE CUSTOMERS(
+  ID   INT              NOT NULL,
+  NAME VARCHAR (20)     NOT NULL,
+  AGE  INT              NOT NULL,
+  ADDRESS  CHAR (25) ,
+  SALARY   DECIMAL (18, 2) DEFAULT 5000.00,      
+  PRIMARY KEY (ID)
+);
+Adding default constraint after table creation. Also make sure you name the default constraint..it will be a pain in the neck to drop it later because it will have one of those crazy system generated names
+ALTER TABLE CUSTOMERS1
+ADD CONSTRAINT DEF_SALARY DEFAULT 5000.00 FOR SALARY;
+To drop a constraint: ALTER TABLE CUSTOMERS1 DROP CONSTRAINT DEF_SALARY;
+UNIQUE Constraint − Ensures that all values in a column are different.The UNIQUE Constraint prevents two records from having identical values in a column. In the CUSTOMERS table, for example, you might want to prevent two or more people from having an identical age.
+CREATE TABLE CUSTOMERS2(
+​ID INT​​​​NOT NULL,
+​NAME VARCHAR(20)​NOT NULL,
+​AGE INT​​​​NOT NULL UNIQUE,
+​ADDRESS CHAR(25),
+​SALARY DECIMAL(18,2),​
+​PRIMARY KEY(ID)
+);
+Adding constraint after table creation
+ALTER TABLE CUSTOMERS2
+ADD CONSTRAINT myUniqueConstraint UNIQUE(AGE);
+Dropping a Constraint
+ALTER TABLE CUSTOMERS2
+DROP CONSTRAINT myUniqueConstraint;
+CHECK CONSTRAINT:  Check constraint checks for a specific condition before inserting data into a table. If the data passes all the Check constraints then the data will be inserted into the table otherwise the data for insertion will be discarded. The CHECK constraint ensures that all values in a column satisfies certain conditions.
+ALTER TABLE CUSTOMERS2
+ADD CONSTRAINT Age_Constraint CHECK(AGE > 15);
+PRIMARY Key − Uniquely identifies each row/record in a database table. Primary keys must contain unique values. A primary key column cannot have NULL values.A table can have only one primary key, which may consist of single or multiple fields. When multiple fields are used as a primary key, they are called a composite key.If a table has a primary key defined on any field(s), then you cannot have two records having the same value of that field(s).
+Foreign Key Constraint A Foreign Key is a field in a database table that is a Primary key in another table. A Foreign key creates a relation between two tables. The first table contains a primary key and the second table contains a foreign key.
+CREATE TABLE ORDERS(
+​ORDERID INT NOT NULL,
+​ORDERNAME VARCHAR(20) NOT NULL,
+​CUSTOMERID INT CONSTRAINT CUSTOMERID_CONSTRAINT REFERENCES CUSTOMERS1(ID),
+​PRIMARY KEY(ORDERID) ​
+);
+INSERT INTO ORDERS VALUES(1,'CHOCOLATES',1);
+INSERT INTO ORDERS VALUES(2,'CAKES',2);
+INSERT INTO ORDERS VALUES(3,'FRUITS',2);
+INSERT INTO ORDERS VALUES(4,'FRUITS',3);
+ 
+ORDERID​ORDERNAME​​CUSTOMERID
+1​CHOCOLATES​1
+2​CAKES​​2
+3​FRUITS​​2
+4​FRUITS​​3
+ 
+ 
+ 
+ 
+ 
+ 
+Joins in SQL Server
+Joins in SQL Server are used to retrieve data from two or more tables with a joining condition.
+SELECT * FROM CUSTOMERS1;
+SELECT * FROM ORDERS;
+ID​NAME​AGE​ADDRESS​​SALARY
+1​RAMESH​25​DELHI                    ​​23000.00
+2​SURESH​25​VADODARA                 ​22000.00
+3​PRAKASH​25​GURGAON                  ​24000.00
+4​HARISH​20​MUMBAI                   ​26000.00
+5​DINESH​25​CHENNAI                  ​22000.00
+6​VINISH​32​HYDERABAD                ​43000.00
+7​PARESH​22​HYDERABAD                ​33000.00
+8​HARISH​25​MUMBAI                   ​100000.00
+ 
+ORDERID​ORDERNAME​​CUSTOMERID
+1​​CHOCOLATES​​1
+2​​CAKES​​​2
+3​​FRUITS​​​2
+4​​FRUITS​​​3
+ 
+There're 4 types of Join in SQL Server, they are:
+ 
+1. Inner Join An Inner join requires matching records from both tables. You can use the “JOIN” or “INNER JOIN” keyword to join you tables. The “INNER” keyword is optional.
+SELECT c.NAME, c.ADDRESS, o.ORDERNAME FROM CUSTOMERS1 c INNER JOIN ORDERS o ON c.ID = o.CUSTOMERID;
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CAKES
+SURESH​​VADODARA                 ​FRUITS
+PRAKASH​GURGAON                  ​FRUITS
+ 
+2. Outer Join
+i. Left Outer Join A left outer join returns a result containing both matching and non-matching rows from the left table. In other words, it returns all rows from the left table. If the join condition matches 0 records in Table B then the join will still return a row in the Result Set, but with NULL in each column from Table B.
+ 
+SELECT c.NAME, c.ADDRESS, o.ORDERNAME FROM CUSTOMERS1 c LEFT OUTER JOIN ORDERS o ON c.ID = o.CUSTOMERID;
+ 
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CAKES
+SURESH​​VADODARA                 ​FRUITS
+PRAKASH​GURGAON                  ​FRUITS
+HARISH​​MUMBAI                   ​NULL
+DINESH​​CHENNAI                  ​NULL
+VINISH​​HYDERABAD                ​NULL
+PARESH​​HYDERABAD                ​NULL
+HARISH​​MUMBAI                   ​NULL
+ 
+As you can see in the preceding output, non-matching rows are represented as NULL in both the columns.
+But what if my manager says, instead if this NULL, some informative should be shown like, No ORDERS or something, then what should we do? 
+So in such scenario, we'll make use of the “ISNULL” method, this method will allow us to show the data we need to display instead of NULL.
+ 
+SELECT c.NAME, c.ADDRESS, ISNULL(o.ORDERNAME, 'GENERAL GROCERIES') AS ORDERNAME FROM CUSTOMERS1 c LEFT OUTER JOIN ORDERS o ON C.ID = o.CUSTOMERID;
+ 
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CAKES
+SURESH​​VADODARA                 ​FRUITS
+PRAKASH​GURGAON                  ​FRUITS
+HARISH​​MUMBAI                   ​GENERAL GROCERIES
+DINESH​​CHENNAI                  ​GENERAL GROCERIES
+VINISH​​HYDERABAD                ​GENERAL GROCERIES
+PARESH​​HYDERABAD                ​GENERAL GROCERIES
+HARISH​​MUMBAI                   ​GENERAL GROCERIES
+ 
+ii. Right Outer Join
+SELECT c.NAME, c.ADDRESS, o.ORDERNAME FROM CUSTOMERS1 c RIGHT OUTER JOIN ORDERS o ON c.ID = o.CUSTOMERID;
+ 
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CAKES
+SURESH​​VADODARA                 ​FRUITS
+PRAKASH​GURGAON                  ​FRUITS
+ 
+INSERT INTO ORDERS VALUES(5,'CAKES',NULL);
+INSERT INTO ORDERS VALUES(6,'NUTS',NULL);
+SELECT * FROM ORDERS;
+ORDERID​ORDERNAME​​CUSTOMERID
+1​​CHOCOLATES​​1
+2​​CAKES​​​2
+3​​FRUITS​​​2
+4​​FRUITS​​​3
+5​​CAKES​​​NULL
+6​​NUTS​​​NULL
+ 
+SELECT c.NAME, c.ADDRESS, o.ORDERNAME FROM CUSTOMERS1 c RIGHT OUTER JOIN ORDERS o ON c.ID = o.CUSTOMERID;
+ 
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CAKES
+SURESH​​VADODARA                 ​FRUITS
+PRAKASH​GURGAON                  ​FRUITS
+NULL​​NULL​​​CAKES
+NULL​​NULL​​​NUTS
+ 
+ 
+iii. Full Outer Join In a full outer join, the result set will display all the data from Table A and Table B. For every non-matching row in a full outer join the unmatched data has NULL.
+SELECT c.NAME, c.ADDRESS, o.ORDERNAME FROM CUSTOMERS1 c FULL OUTER JOIN ORDERS o ON c.ID = o.CUSTOMERID;
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CAKES
+SURESH​​VADODARA                 ​FRUITS
+PRAKASH​GURGAON                  ​FRUITS
+HARISH​​MUMBAI                   ​NULL
+DINESH​​CHENNAI                  ​NULL
+VINISH​​HYDERABAD                ​NULL
+PARESH​​HYDERABAD                ​NULL
+HARISH​​MUMBAI                   ​NULL
+NULL​​NULL​​​CAKES
+NULL​​NULL​​​NUTS
+ 
+3. Cross Join A cross join returns the Cartesian product of rows from both tables in the join. In other words, it'll produce rows that combines rows from Table A with each row from Table B.
+ 
+SELECT c.NAME, c.ADDRESS, o.ORDERNAME FROM CUSTOMERS1 c CROSS JOIN ORDERS o;
+ 
+NAME​​ADDRESS​​ORDERNAME
+RAMESH​​DELHI                    ​​CHOCOLATES
+SURESH​​VADODARA                 ​CHOCOLATES
+PRAKASH​GURGAON                  ​CHOCOLATES
+HARISH​​MUMBAI                   ​CHOCOLATES
+DINESH​​CHENNAI                  ​CHOCOLATES
+VINISH​​HYDERABAD                ​CHOCOLATES
+PARESH​​HYDERABAD                ​CHOCOLATES
+HARISH​​MUMBAI                   ​CHOCOLATES
+RAMESH​​DELHI                    ​​CAKES
+SURESH​​VADODARA                 ​CAKES
+PRAKASH​GURGAON                  ​CAKES
+HARISH​​MUMBAI                   ​CAKES
+DINESH​​CHENNAI                  ​CAKES
+VINISH​​HYDERABAD                ​CAKES
+PARESH​​HYDERABAD                ​CAKES
+HARISH​​MUMBAI                   ​CAKES
+…..​​……..​​​……
+…..​​……..​​​……
+ 
+SO ON….
+8 Rows from CUSTOMERS1
+6 Rows from ORDERS
+Cross Join => [8 X 6] = 48 Rows.
+ 
+4. Self Join A self-join is the joining of the table to itself.
+ 
+ 
+ 
+Stored Procedure A Stored Procedure is a collection or a group of T-SQL statements.
+Reference: https://www.c-sharpcorner.com/UploadFile/219d4d/stored-procedures-in-sql-server/
+ 
+We’ve created two more tables – employee and department.
+CREATE TABLE tblEmployees(
+​ EmployeeId INT NOT NULL,
+​ Name VARCHAR(20) NOT NULL,
+​ Gender VARCHAR(8) NOT NULL,
+​ City VARCHAR(10) NOT NULL,
+​ EmployeeDepartmentID  INT CONSTRAINT EmpDeptConstraint REFERENCES tblDepartments(DepartmentId),
+​ PRIMARY KEY(EmployeeId)​
+);
+CREATE TABLE tblDepartments(
+​DepartmentId INT NOT NULL,
+​DepartmentName INT NOT NULL,
+​PRIMARY KEY(DepartmentId)
+);
+INSERT INTO tblDepartments VALUES(1,'IT');
+INSERT INTO tblDepartments VALUES(2,'HR');
+INSERT INTO tblDepartments VALUES(3,'PAY ROLL');
+INSERT INTO tblDepartments VALUES(5,'OTHER DEPARTMENTS');
+/* Department name bydefault given of type Int */
+ALTER TABLE tblDepartments
+ALTER COLUMN DepartmentName VARCHAR(20);
+ 
+INSERT INTO tblEmployees VALUES(1,'Tvor','Female','Los',3);
+INSERT INTO tblEmployees VALUES(2,'Lara','male','Delhi',3);
+INSERT INTO tblEmployees VALUES(3,'Sam Fisher','Female','Saltlake',2);
+INSERT INTO tblEmployees VALUES(5,'Aiden Pearce','male','Mumbai',1);
+INSERT INTO tblEmployees VALUES(6,'T-Bone','Female','Kolkata',1);
+INSERT INTO tblEmployees VALUES(7,'Kratos','male','Chennai',2);
+INSERT INTO tblEmployees VALUES(8,'Michael','Female','Vizag',3);
+INSERT INTO tblEmployees VALUES(9,'Captain Price','male','Vizag',1);
+INSERT INTO tblEmployees VALUES(10,'New Record','male','Delhi',2);
+INSERT INTO tblEmployees VALUES(11,'Ravi','male','Hyderabad',3);
+INSERT INTO tblEmployees VALUES(12,'Sample','Female','Hyderabad',NULL);
+ 
+SELECT * FROM tblEmployees;
+SELECT * FROM tblDepartments;
+
+ 
+we want to display the columns EmployeeId, Name, Gender and DepartmentName of all the employees from these two tables using an INNER-JOIN.
+ 
+SELECT e.EmployeeId, e.Name, e.Gender, d.DepartmentName from tblEmployees e INNER JOIN tblDepartments d ON e.EmployeeDepartmentID = d.DepartmentId;
+
+What if there is a situation where we need to execute the same query again and again. For that we need to write the preceding query every single time and in a real scenario the query could be of 100 or 200 lines. So, in that case we can use a Stored Procedure.
+syntax:
+1. CREATE PROCEDURE spProcedureName  
+2. AS  
+3. BEGIN  
+4. query  
+5. END  
+Now let's add the INNER JOIN query inside the Begin and End block of the Stored Procedure.
+ 
+CREATE PROCEDURE spGetEmployeeDepartment
+AS
+BEGIN
+SELECT e.EmployeeId, e.Name, e.Gender, d.DepartmentName from tblEmployees e INNER JOIN tblDepartments d ON e.EmployeeDepartmentID = d.DepartmentId;
+END;
+EXECUTE spGetEmployeeDepartment;
+
+ 
+In SQL Server, the @ symbol is prefixed with the name of the parameters and variables. In the preceding Stored Procedure, spEmployeeByGender, we have added a parameter and before the end block we added a filter using the Where clause. So, whatever value we pass for @Gender will be assigned in the Where clause and that value will become the value for the Gender column.
+ 
+/* Sp with parameters */
+ 
+CREATE PROCEDURE spGetEmpDeptGenderParameter
+@Gender VARCHAR(10)
+AS
+BEGIN
+SELECT e.EmployeeId, e.Name, e.Gender, d.DepartmentName
+from tblEmployees e INNER JOIN tblDepartments d
+ON e.EmployeeDepartmentID = d.DepartmentId
+WHERE e.Gender = @Gender
+END;
+ 
+EXECUTE spGetEmpDeptGenderParameter 'Female'
+
+How to modify a Stored Procedure​​
+/* Modify Stored Procedure */
+ALTER PROCEDURE spGetEmpDeptGenderParameter
+@Gender VARCHAR(10),
+@Department VARCHAR(30)
+AS
+BEGIN
+SELECT e.EmployeeId, e.Name, e.Gender, d.DepartmentName
+FROM tblEmployees e INNER JOIN tblDepartments d
+ON e.EmployeeDepartmentID = d.DepartmentId
+WHERE e.Gender = @Gender
+AND d.DepartmentName = @Department
+END
+ 
+EXEC spGetEmpDeptGenderParameter 'male', 'IT';
+
+ 
+How to view the text of the Stored Procedure that we created
+EXEC sp_helptext spGetEmpDeptGenderParameter;
+
+How to drop a Stored Procedure
+1. DROP PROCEDURE spEmployeeByGender;  
+How to create and execute a Stored Procedure with an output parameter
+To create a Stored Procedure with output parameter, we use the out or output keyword.
+Let's say we want to count the total number of employees whose EmployeeDepartmentId is 1.
+ 
+/* output parameter */
+CREATE PROCEDURE spEmployeeCountDepartment
+@DepartmentId INT,
+@TotalEmpDept INT OUT
+AS
+BEGIN
+SELECT @TotalEmpDept = COUNT(EmployeeId)
+FROM tblEmployees
+WHERE EmployeeDepartmentID = @DepartmentId
+END;
+ 
+To execute this Stored Procedure we can say:
+Execute spEmployeeCountDepartment – but doest work
+Look at the type of value the first parameter expects, it is of type int. That means we can pass the departmentId here and the second parameter expects an output object.The Output parameter returns a value back and to hold that value we need to create a variable. To create a new variable, we use a DECLARE keyword.
+ 
+DECLARE @OUTPUTCNT INT
+EXEC spEmployeeCountDepartment 1,@OUTPUTCNT OUT
+SELECT @OUTPUTCNT
+ 
+
+ 
+DECLARE @OUTPUTCNT INT
+EXEC spEmployeeCountDepartment 1,@OUTPUTCNT OUT
+SELECT @OUTPUTCNT AS TotalEmployees
+ 
+
+ 
+Views
+Reference https://www.codeproject.com/Articles/127726/Introduction-to-Sql-Server-Views
+ 
